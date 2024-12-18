@@ -163,27 +163,27 @@
   </div>
 
 <script>
-    const display = document.getElementById("display");
-const themeSwitcher = document.getElementById("theme-switcher");
-const body = document.body;
-
-let currentInput = "";
-let operator = "";
-let firstOperand = null;
-
-function appendNumber(number) {
+ const display = document.getElementById("display");
+ const themeSwitcher = document.getElementById("theme-switcher");
+ const body = document.body;
+ 
+ let currentInput = "";
+ let operator = "";
+ let firstOperand = null;
+ 
+ function appendNumber(number) {
   currentInput += number;
   updateDisplay();
-}
+ }
 
-function appendDot() {
+ function appendDot() {
   if (!currentInput.includes(".")) {
     currentInput += ".";
     updateDisplay();
   }
 }
 
-function appendOperator(op) {
+ function appendOperator(op) {
   if (currentInput !== "") {
     if (firstOperand === null) {
       firstOperand = parseFloat(currentInput);
@@ -193,7 +193,7 @@ function appendOperator(op) {
   }
 }
 
-function calculateResult() {
+ function calculateResult() {
   if (firstOperand !== null && currentInput !== "") {
     const secondOperand = parseFloat(currentInput);
     switch (operator) {
@@ -217,23 +217,23 @@ function calculateResult() {
   }
 }
 
-function deleteNumber() {
+ function deleteNumber() {
   currentInput = currentInput.slice(0, -1);
   updateDisplay();
 }
 
-function resetCalculator() {
+ function resetCalculator() {
   currentInput = "";
   operator = "";
   firstOperand = null;
   updateDisplay();
 }
 
-function updateDisplay() {
+ function updateDisplay() {
   display.textContent = currentInput || "0";
 }
 
-themeSwitcher.addEventListener("input", (e) => {
+ themeSwitcher.addEventListener("input", (e) => {
   body.setAttribute("data-theme", e.target.value);
 });
 </script>
