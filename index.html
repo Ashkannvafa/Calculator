@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Theme Calculator</title>
+  <style>
+    :root {
+     --bg-main: hsl(222, 26%, 31%);
+     --bg-toggle: hsl(223, 31%, 20%);
+     --bg-screen: hsl(224, 36%, 15%);
+     --key-bg: hsl(30, 25%, 89%);
+     --key-shadow: hsl(28, 16%, 65%);
+     --key-blue: hsl(225, 21%, 49%);
+     --key-blue-shadow: hsl(224, 28%, 35%);
+     --key-red: hsl(6, 63%, 50%);
+     --key-red-shadow: hsl(6, 70%, 34%);
+     --text-main: white;
+    }
+
+    [data-theme="2"] {
+     --bg-main: hsl(0, 0%, 90%);
+     --bg-toggle: hsl(0, 5%, 81%);
+     --bg-screen: hsl(0, 0%, 93%);
+     --key-bg: hsl(45, 7%, 89%);
+     --key-shadow: hsl(35, 11%, 61%);
+     --key-blue: hsl(185, 42%, 37%);
+     --key-red: hsl(25, 98%, 40%);
+     --text-main: hsl(60, 10%, 19%);
+    }
+
+    [data-theme="3"] {
+     --bg-main: hsl(268, 75%, 9%);
+     --bg-toggle: hsl(268, 71%, 12%);
+     --bg-screen: hsl(268, 71%, 12%);
+     --key-bg: hsl(268, 47%, 21%);
+     --key-shadow: hsl(290, 70%, 36%);
+     --key-blue: hsl(281, 89%, 26%);
+     --key-red: hsl(176, 100%, 44%);
+     --text-main: hsl(52, 100%, 62%);
+    }
+
+    body {
+     margin: 0;
+     font-family: Arial, sans-serif;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     height: 100vh;
+     background-color: var(--bg-main);
+     color: var(--text-main);
+    }
+
+    .calculator {
+     display: flex;
+     flex-direction: column;
+     gap: 1rem;
+     background-color: var(--bg-toggle);
+     padding: 1rem;
+     border-radius: 12px;
+     width: 300px;
+    }
+
+    .header {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+    }
+
+    .toggle-container {
+     display: flex;
+     gap: 5px;
+     align-items: center;
+    }
+
+    input[type="range"] {
+     appearance: none;
+     background: var(--key-red);
+     border-radius: 20px;
+     width: 60px;
+    }
+
+    .display {
+     background-color: var(--bg-screen);
+     color: var(--text-main);
+     text-align: right;
+     font-size: 2rem;
+     padding: 1rem;
+     border-radius: 5px;
+    }
+
+    .buttons {
+     display: grid;
+     grid-template-columns: repeat(4, 1fr);
+     gap: 0.5rem;
+    }
+
+    .btn {
+     background-color: var(--key-bg);
+     box-shadow: 0 3px var(--key-shadow);
+     border: none;
+     border-radius: 12px;
+     padding: 1rem;
+     font-size: 1.2rem;
+     color: var(--text-main);
+     cursor: pointer;
+    }
+
+    .del{
+     background-color: var(--key-blue);
+     color: white;
+    }
+    .reset{
+      grid-area: 5/1/6/3;
+    }
+
+    .equal {
+     background-color: var(--key-red);
+     color: white;
+     grid-area: 5/3/6/5;
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <div class="header">
+      <h1>calc</h1>
+      <div class="theme-toggle">
+        <span>THEME</span>
+        <div class="toggle-container">
+          <span>1</span>
+          <span>2</span>
+          <span>3</span>
+          <input type="range" min="1" max="3" step="1" value="1" id="theme-switcher">
+        </div>
+      </div>
+    </div>
+    <div class="display" id="display">0</div>
+    <div class="buttons">
+      <button class="btn" onclick="appendNumber(7)">7</button>
+      <button class="btn" onclick="appendNumber(8)">8</button>
+      <button class="btn" onclick="appendNumber(9)">9</button>
+      <button class="btn del" onclick="deleteNumber()">DEL</button>
+
+      <button class="btn" onclick="appendNumber(4)">4</button>
+      <button class="btn" onclick="appendNumber(5)">5</button>
+      <button class="btn" onclick="appendNumber(6)">6</button>
+      <button class="btn" onclick="appendOperator('+')">+</button>
+
+      <button class="btn" onclick="appendNumber(1)">1</button>
+      <button class="btn" onclick="appendNumber(2)">2</button>
+      <button class="btn" onclick="appendNumber(3)">3</button>
+      <button class="btn" onclick="appendOperator('-')">-</button>
+
+      <button class="btn" onclick="appendDot()">.</button>
+      <button class="btn" onclick="appendNumber(0)">0</button>
+      <button class="btn" onclick="appendOperator('/')">/</button>
+      <button class="btn" onclick="appendOperator('*')">x</button>
+
+      <button class="btn reset" onclick="resetCalculator()">RESET</button>
+      <button class="btn equal" onclick="calculateResult()">=</button>
+    </div>
+  </div>
+
+<script>
+    const display = document.getElementById("display");
+const themeSwitcher = document.getElementById("theme-switcher");
+const body = document.body;
+
+let currentInput = "";
+let operator = "";
+let firstOperand = null;
+
+function appendNumber(number) {
+  currentInput += number;
+  updateDisplay();
+}
+
+function appendDot() {
+  if (!currentInput.includes(".")) {
+    currentInput += ".";
+    updateDisplay();
+  }
+}
+
+function appendOperator(op) {
+  if (currentInput !== "") {
+    if (firstOperand === null) {
+      firstOperand = parseFloat(currentInput);
+    }
+    operator = op;
+    currentInput = "";
+  }
+}
+
+function calculateResult() {
+  if (firstOperand !== null && currentInput !== "") {
+    const secondOperand = parseFloat(currentInput);
+    switch (operator) {
+      case "+":
+        firstOperand += secondOperand;
+        break;
+      case "-":
+        firstOperand -= secondOperand;
+        break;
+      case "*":
+        firstOperand *= secondOperand;
+        break;
+      case "/":
+        firstOperand /= secondOperand;
+        break;
+    }
+    currentInput = firstOperand.toString();
+    operator = "";
+    firstOperand = null;
+    updateDisplay();
+  }
+}
+
+function deleteNumber() {
+  currentInput = currentInput.slice(0, -1);
+  updateDisplay();
+}
+
+function resetCalculator() {
+  currentInput = "";
+  operator = "";
+  firstOperand = null;
+  updateDisplay();
+}
+
+function updateDisplay() {
+  display.textContent = currentInput || "0";
+}
+
+themeSwitcher.addEventListener("input", (e) => {
+  body.setAttribute("data-theme", e.target.value);
+});
+</script>
+</body>
+</html>
